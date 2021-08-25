@@ -9,9 +9,21 @@ class Controller {
       const result = await User.create({
         name,
         email,
-        password
+        password,
       });
       res.status(201).json({ id: result.id, email: result.email });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async checkRole(req, res, next) {
+    try {
+      const id = +req.params.id;
+      const result = await User.findByPk(id);
+      res.status({
+        role: result.role,
+      });
     } catch (err) {
       next(err);
     }
@@ -21,7 +33,7 @@ class Controller {
     try {
       const { email, password } = req.body;
       const foundUser = await User.findOne({
-        where: { email }
+        where: { email },
       });
       if (!foundUser) {
         throw { name: "Unauthorized" };
@@ -32,10 +44,10 @@ class Controller {
         } else {
           const payload = {
             id: foundUser.id,
-            email: foundUser.email
+            email: foundUser.email,
           };
           const access_token = signToken(payload);
-          res.status(200).json({ access_token });
+          res.status(200).json({ access_token, role: foundUser.role });
         }
       }
     } catch (err) {

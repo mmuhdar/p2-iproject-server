@@ -6,19 +6,19 @@ class Controller {
   static async findAllAnime(req, res, next) {
     try {
       const { page, title } = req.query;
-      const limit = 10;
+      const limit = 12;
       const offset = page * limit - limit;
       if (!title) {
         const response = await Anime.findAndCountAll({
           include: [Episode],
           limit,
-          offset
+          offset,
         });
         const result = {
           totalItems: response.count,
           animes: response.rows,
           totalPages: Math.ceil(response.count / limit),
-          currentPage: +page
+          currentPage: +page,
         };
         res.status(200).json(result);
       } else if (page && title) {
@@ -27,14 +27,14 @@ class Controller {
           limit,
           offset,
           where: {
-            title: { [Op.like]: `%${title}%` }
-          }
+            title: { [Op.like]: `%${title}%` },
+          },
         });
         const result = {
           totalItems: response.count,
           animes: response.rows,
           totalPages: Math.ceil(response.count / limit),
-          currentPage: +page
+          currentPage: +page,
         };
         res.status(200).json(result);
       }
@@ -43,10 +43,23 @@ class Controller {
     }
   }
 
+  static async getAnimeId(req, res, next) {
+    try {
+      const id = +req.params.id;
+      const result = await Anime.findByPk(id, {
+        include: [Episode],
+      });
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async searchAnime(req, res, next) {
     try {
+      console.log(req.query);
       const { title } = req.query;
-      const { data } = await jikan.get(`/search/anime?q=${title}&limit=10`);
+      const { data } = await jikan.get(`/search/anime?q=${title}&limit=12`);
       res.status(200).json(data.results);
     } catch (err) {
       next(err);
@@ -67,8 +80,8 @@ class Controller {
             type,
             episodes,
             image_url,
-            mal_id
-          }
+            mal_id,
+          },
         });
         res.status(201).json(anime);
       }
@@ -92,7 +105,7 @@ class Controller {
             {
               title,
               type,
-              episodes
+              episodes,
             },
             { where: { id } }
           );
@@ -115,7 +128,7 @@ class Controller {
           throw { name: "NotFound" };
         } else {
           await Anime.destroy({
-            where: { id }
+            where: { id },
           });
           res.status(200).json({ message: `Success delete ${anime.title}` });
         }

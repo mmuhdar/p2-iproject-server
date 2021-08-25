@@ -18,6 +18,9 @@ const error = (err, req, res, next) => {
     case "JsonWebTokenError":
       res.status(400).json({ message: "Invalid token signature" });
       break;
+    case "TokenExpiredError":
+      res.status(400).json({ message: "access token expired" });
+      break;
 
     default:
       res.status(500).json({ message: "internal server error" });
