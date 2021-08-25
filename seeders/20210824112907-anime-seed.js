@@ -3,7 +3,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const jikan = require("../apis/jikan");
-    const { data } = await jikan.get("/top/anime/1/tv");
+    const { data } = await jikan.get("/top/anime/2/tv");
     const newData = data.top.map((el) => {
       delete el.rank;
       delete el.url;
