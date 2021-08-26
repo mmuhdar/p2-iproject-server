@@ -18,7 +18,8 @@
     "sequelize": "^6.6.5"
   },
   "devDependencies": {
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "sequelize-cli": "^6.2.0"
   },
   "bugs": {
     "url": "https://github.com/mmuhdar/p2-iproject-server/issues"
