@@ -21,12 +21,20 @@ const error = (err, req, res, next) => {
     case "TokenExpiredError":
       res.status(400).json({ message: "access token expired" });
       break;
+    case "SequelizeUniqueConstraintError":
+      res.status(400).json({ message: "Email has already registered" });
+      break;
+    case "SequelizeValidationError":
+      const errors = err.errors.map((el) => {
+        return el.message;
+      });
+      res.status(400).json({ message: errors });
+      break;
 
     default:
       res.status(500).json({ message: "internal server error" });
       break;
   }
-  console.log(err);
 };
 
 module.exports = error;
